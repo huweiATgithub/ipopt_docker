@@ -1,6 +1,6 @@
 FROM python:3.8.7-buster
 
-LIB_DIR=/usr/local
+ARG LIB_DIR=/usr/local
 RUN apt-get update && apt-get install gfortran
 WORKDIR /src
 RUN git clone https://github.com/coin-or-tools/ThirdParty-Metis.git && \
