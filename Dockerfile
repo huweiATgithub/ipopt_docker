@@ -1,13 +1,20 @@
 FROM python:3.8.7-buster
 
 ARG LIB_DIR=/usr/local
-RUN apt-get update && apt-get install gfortran
+RUN apt-get -qq update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends \
+    gfortran \
+    libblas-dev liblapack-dev \
+    && \
+    apt-get clean && \
+    apt-get autoremove && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    
 WORKDIR /src
 RUN git clone https://github.com/coin-or-tools/ThirdParty-Metis.git && \
     cd ThirdParty-Metis && ./get.Metis && ./configure --prefix=$LIB_DIR && make && make install
   
 # These Linear algebra package no longer updated and have some problems of linking.
-RUN apt-get update && apt-get install libblas-dev liblapack-dev
 # WORKDIR /src
 # RUN git clone https://github.com/coin-or-tools/ThirdParty-Blas.git
 #     cd ThirdParty-Blas && ./get.Blas && ./configure --prefix=$LIB_DIR && make && make install 
@@ -31,6 +38,6 @@ RUN curl -O https://www.coin-or.org/download/source/Ipopt/Ipopt-${IPOPT_VER}.tgz
 ENV LD_LIBRARY_PATH=/usr/local/lib:${LD_LIBRARY_PATH}
 
 WORKDIR /src
-RUN pip install numpy cython future six setuptools && \
+RUN pip install --no-cache-dir --ignore-installed numpy cython future six setuptools && \
     git clone https://github.com/mechmotum/cyipopt.git && \
     cd cyipopt && python setup.py build && python setup.py install
