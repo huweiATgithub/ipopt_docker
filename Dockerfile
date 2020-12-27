@@ -5,8 +5,9 @@ RUN apt-get update && apt-get install gfortran
 WORKDIR /src
 RUN git clone https://github.com/coin-or-tools/ThirdParty-Metis.git && \
     cd ThirdParty-Metis && ./get.Metis && ./configure --prefix=$LIB_DIR && make && make install
-
+  
 # These Linear algebra package no longer updated and have some problems of linking.
+RUN apt-get install libblas-dev liblapack-dev
 # WORKDIR /src
 # RUN git clone https://github.com/coin-or-tools/ThirdParty-Blas.git
 #     cd ThirdParty-Blas && ./get.Blas && ./configure --prefix=$LIB_DIR && make && make install
